@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "assetHub": {
+      "wsUrl": "wss://polkadot-asset-hub-rpc.polkadot.io",
+      "metadata": ".papi/metadata/assetHub.scale"
+    },
+    "polkadot": {
+      "wsUrl": "wss://rpc.polkadot.io",
+      "metadata": ".papi/metadata/polkadot.scale"
+    }
+  }
+}
