@@ -7,14 +7,20 @@ import { getApi, type ApiProviderMode } from "./util/getApi";
 import type { ChainId } from "./util/types";
 
 const testTransferDryRun = async (chainId: ChainId, mode: ApiProviderMode) => {
-  const timeKey = `dryRun - ${chainId} - ${mode}`;
-  console.time(timeKey);
+  const key = `[${chainId} - ${mode}]`;
+  console.time(key);
   try {
     const api = await getApi(chainId as "assetHub", mode);
 
-    const xfer = api.tx.Balances.transfer_all({
+    const balance = await api.query.System.Account.getValue(alice.address, {
+      at: "best",
+    });
+
+    console.log(`${key} Alice balance : ${balance.data.free}`);
+
+    const xfer = api.tx.Balances.transfer_keep_alive({
       dest: MultiAddress.Id(bob.address),
-      keep_alive: true,
+      value: 1000000000000n,
     });
 
     const dryRun = await api.apis.DryRunApi.dry_run_call(
@@ -27,14 +33,14 @@ const testTransferDryRun = async (chainId: ChainId, mode: ApiProviderMode) => {
     );
 
     console.log(
-      `Dry run on ${chainId} with ${mode} mode. success:${
-        dryRun.success
-      } result:${dryRun.success && dryRun.value.execution_result.success}`
+      `${key} Dry run completed. success:${dryRun.success} result:${
+        dryRun.success && dryRun.value.execution_result.success
+      } events:${dryRun.success && dryRun.value.emitted_events.length}`
     );
   } catch (err) {
-    console.error(`Failed to dry run on ${chainId} with ${mode} mode`, err);
+    console.error(`${key} Failed to dry run`, err);
   } finally {
-    console.timeEnd(timeKey);
+    console.timeEnd(key);
   }
 };
 

@@ -55,11 +55,11 @@ const getClient = async (chainId: ChainId, mode: ApiProviderMode) => {
   }
 };
 
-export const getApi = async <Id extends ChainId>(
+export const getApi = async <Id extends ChainId, Res = Api<Id>>(
   chainId: Id,
   mode: ApiProviderMode
-): Promise<Api<Id>> => {
+): Promise<Res> => {
   const client = await getClient(chainId, mode);
 
-  return client.getTypedApi(DESCRIPTORS[chainId]) as Api<Id>;
+  return client.getTypedApi(DESCRIPTORS[chainId]) as Res;
 };
